@@ -1,22 +1,26 @@
+import java.util.Scanner
+
 object Solution {
   def main (args:Array[String]){
-    val in = new Sccaner(System.in)
+    val in = new Scanner(System.in)
     val T = in.nextLine.toInt
-    val L = in.nextLine
 
-    for(i <- 0 to T) {
-      val list = L.toList
-      println(sweep(list,0,1).mkString(""))
+    for(i <- 1 to T) {
+      val L = in.nextLine
+      println(swap(L))
     }
 
 
   }
 
-  def swap (l : List[Char],from:Int,to:Int) : List[Char] = {
-    if(to < 0) {
-      List()
-    } else {
-
+  def swap (s:String) : String = {
+    def swapInn(list:List[Char]):List[Char] = list match {
+      case Nil => Nil
+      case x::Nil => List(x)
+      case x :: y :: rest => y :: x :: swapInn(rest)
     }
+    swapInn(s.toList).mkString("")
   }
 }
+
+swap("abcdef",0)
