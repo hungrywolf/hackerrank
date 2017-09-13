@@ -1,24 +1,10 @@
-import java.io.StringWriter
-import au.com.bytecode.opencsv.CSVWriter
-import scala.collection.JavaConversions._
-import java.io.FileWriter
-import java.io.BufferedWriter
+import java.io._
 
-object MAKECSV extends App {
+val data = List("everything", "you", "want", "to", "write", "to", "the", "file")
 
-val out = new BufferedWriter(new FileWriter("/home/saleh/Desktop/employee.csv"));
-val writer = new CSVWriter(out);
-val employeeSchema=Array("name","age","dept")
-
-val employee1= Array("piyush","23","computerscience")
-
-val employee2= Array("neel","24","computerscience")
-
-val employee3= Array("aayush","27","computerscience")
-
-var listOfRecords= List(employeeSchema,employee1,employee2,employee3)
-
-writer.writeAll(listOfRecords)
-out.close()
-
+val file = "~/Desktop/whatever.txt"
+val writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)))
+for (x <- data) {
+  writer.write(x + "\n")  // however you want to format it
 }
+writer.close()
