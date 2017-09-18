@@ -1,67 +1,39 @@
-import java.util.Scanner;
-import java.util.Stack
+import scala.collection.mutable.ArrayBuffer
 
 object Solution {
 
-  case class Point(x:Double,y:Double)
+    type Coordinate = (Int, Int)
 
-  def main(args: Array[String]) {
-    val in = new Scanner(System.in)
-    val N = in.nextInt
+    def euclid(x: Coordinate, y: Coordinate): Double =
+      Math.sqrt(Math.pow(x._1 - y._1, 2) + Math.pow(x._2 - y._2, 2))
 
-    val list = (for {
-      i <- 1 to N
-      val x = in.nextDouble
-      val y = in.nextDouble
+    def array2Tuple(a: Array[Int]): Coordinate = (a(0), a(1))
 
-    } yield Point(x,y)).toList
+    def crossProduct(a: Coordinate, b: Coordinate, c: Coordinate): Int =
+        (b._1 - a._1) * (c._2 - b._2) - (c._1 - b._1) * (b._2 - a._2)
 
-    val sortedList = list.sortBy(_.x)
-    val full = List(halfWay(sortedList.reverse)) ::: List(halfWay(sortedList))
-    val flat = full.flatten.asInstanceOf[List[Point]]
-    println(flat)
-    val newfull = flat ::: List(flat.head)
+    def inBetween(a: Coordinate, b: Coordinate, c: Coordinate): Boolean =
+        crossProduct(a, b, c) == 0 && (b._1 - a._1) * (b._1 - c._1) <= 0 && (b._2 - a._2) * (b._2 - c._2) <= 0
 
-    println(sum(newfull))
+    def shouldRemove(a: Coordinate, b: Coordinate, c: Coordinate): Boolean =
+        crossProduct(a, b, c) < 0 || inBetween(b, a, c)
 
-    in.close
-  }
-
-  def sum(l:List[Point]) : Double = {
-    def calculat(list:List[Point]) : Double  = list match {
-      case Nil => 0.0
-      case p1 :: p2 :: rest => primt(p1,p2) + calculat(List(p2) ::: rest)
-      case p1 :: Nil => primt(p1,list.head)
+    def convexHull(a: Array[Coordinate]): Double = {
+        val p0 = a.minBy(_.swap)
+        val b = a.filter(_ != p0).sortBy(x => (p0._1 - x._1) / euclid(p0, x)) :+ p0
+        val h = b.tail.foldLeft(ArrayBuffer(p0, b.head)) {
+            (z, x) => {
+                while (z.length >= 2 && shouldRemove(z(z.length - 2), z.last, x))
+                    z.remove(z.length - 1)
+                if (z.length < 2 || !inBetween(z(z.length - 2), x, z.last))
+                    z += x
+                z
+            }
+        }
+        h.sliding(2).toArray.map(t => euclid(t(0), t(1))).sum
     }
-    calculat(l)
-  }
 
-  def primt(p1:Point,p2:Point) : Double = {
-    val d = Math.sqrt(Math.pow(p1.x-p2.x,2) + Math.pow(p1.y-p2.y,2))
-    d
-  }
-
-  def halfWay(points:List[Point]):List[Object] = {
-    val stack = new Stack[Point]
-    for(p <- points) {
-      while(stack.size >= 2 && orientation(p,stack.peek,stack.get(stack.size-2))){
-        stack.pop
-      }
-        stack.push(p)
+    def main(args: Array[String]) {
+        println(convexHull((1 to readInt()).map(_ => array2Tuple(readLine.trim.split(' ').map(_.toInt))).toArray))
     }
-    stack.pop
-
-    stack.toArray.toList
-  }
-
-  def cross(p0:Point,p1:Point,p2:Point) : Double =
-     (p0.y - p1.y) * (p2.x - p1.x) - (p0.x - p1.x) * (p2.y - p1.y);
-
-  def orientation(p0:Point,p1:Point,p2:Point) : Boolean = {
-
-      val a = (p0.y - p1.y) * (p2.x - p1.x) <= 0
-      val b = (p0.x - p1.x) * (p2.y - p1.y) <= 0
-
-      cross(p0,p1,p2) < 0.0 || cross(p0,p1,p2)==0 && a && b
-  }
 }
