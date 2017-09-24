@@ -28,6 +28,9 @@ def main(configFilePath,days):
 
     formatedDate = day.strftime(datefomate)
 
+    dropTablesOutPutInit, dropTablesErrorsInit = run_cmd(['hive', '-f',dropTablesSQLFile,'-hiveconf', 'date='+formatedDate])
+    print (dropTablesOutPutInit)
+
     rejectionAndDedupOutPut, rejectionAndDedupErrors = run_cmd(['hive', '-f',rejectionAndDedupSQLFile,'-hiveconf', 'date='+formatedDate])
     print (rejectionAndDedupOutPut)
 
