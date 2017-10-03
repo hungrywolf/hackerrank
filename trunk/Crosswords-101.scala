@@ -30,7 +30,7 @@ object Solution {
                     stripe <- st(w.length)
                     curr: Result = (stripe zip w).toMap
                     next: Result = res ++ curr
-                    if next == res ++ curr
+                    if next == curr ++ res
                 } yield search(wt, st + Tuple2(w.length, st(w.length).filterNot(_ == w)), next)
                 l.find(_ != Map.empty) match {
                     case Some(x) => x
