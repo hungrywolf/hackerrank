@@ -18,7 +18,7 @@ rating.registerTempTable("rating")
 val explodAnime = anime.withColumn("genre",explode(split($"genre","[,]")))
 explodAnime.registerTempTable("explodanime")
 
-val finalResult2 = sqlContext.sql("select a.genre ,count(r.rating) as sum from rating as r , explodanime as a where r.anime_id = a.anime_id and a.episodes > 10 and a.rating > 0 group by a.genre order by sum desc limit 10")
+//val finalResult2 = sqlContext.sql("select a.genre ,count(r.rating) as sum from rating as r , explodanime as a where r.anime_id = a.anime_id and a.episodes > 10 and a.rating > 0 group by a.genre order by sum desc limit 10")
 
 val filterAnime = sqlContext.sql("select * from anime where episodes > 10 and rating > 0")
 filterAnime.registerTempTable("filteranime")
